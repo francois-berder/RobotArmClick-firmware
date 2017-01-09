@@ -14,6 +14,6 @@ $ sudo apt-get install gpasm
 Then, create the firmware:
 
 ```sh
-$ gpasm -p pic12lf1552 firmware.s
+$ gpasm -p pic12lf1552 firmware.s -w1
 ```
 
