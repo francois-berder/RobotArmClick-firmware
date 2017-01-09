@@ -1,5 +1,27 @@
 #include p12lf1552.inc
 
+; Configuration bits
+;
+; Configuration word 1:
+; CLKOUTEN:     Disabled
+; BOREN:        Enabled
+; CP:           Disabled
+; MCLRE:        Disabled
+; PWRTE:        Enabled
+; WDTE:         Disabled
+; FOSC:         INTOSC
+;
+; Configuration word 2:
+; LVP:          Disabled
+; LPBOR:        Disabled
+; BORV:         Low
+; STVREN:       Enabled
+; WRT:          All protected
+
+    __CONFIG _CONFIG1, _CLKOUTEN_OFF & _BOREN_ON & _CP_OFF & _MCLRE_OFF & _PWRTE_ON & _WDTE_OFF & _FOSC_INTOSC
+    __CONFIG _CONFIG2, _LVP_OFF & _LPBOR_OFF & _BORV_LO & _STVREN_ON & _WRT_ALL
+
+
 ; 7-bit slave address on bits [7-1], hence 0x15
 #define I2C_ADDRESS (0x3A)
 
