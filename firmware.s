@@ -210,7 +210,7 @@ handle_i2c_write_1a
 
 handle_i2c_write_2              ;   else if current_state == 2
                                 ;       if current_reg == 0
-                                ;           servo_enable = i2c_buffer
+                                ;           servo_enable = i2c_buffer & 0x0F
                                 ;       else
                                 ;           regs[current_reg] = i2c_buffer
                                 ;       current_state = 4
@@ -224,6 +224,7 @@ handle_i2c_write_2              ;   else if current_state == 2
     goto handle_i2c_write_2a
 
     movf i2c_buffer, W
+    andlw 0x0F
     movwf servo_enable
     goto handle_i2c_write_2b
 
