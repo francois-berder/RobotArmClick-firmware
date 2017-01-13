@@ -58,9 +58,19 @@ current_reg equ 0x72
 ; Interrupt vector
     org 0x0004
 
+    ; Increase frequency to 8MHz
+    banksel OSCCON
+    movlw 0x70
+    movwf OSCCON
+
     banksel PIR1
     btfsc PIR1, SSP1IF
     call handle_i2c_interrupt
+
+    ; Switch back frequency to 500kHz
+    banksel OSCCON
+    movlw 0x38
+    movwf OSCCON
 
     retfie
 
