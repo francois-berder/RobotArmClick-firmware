@@ -71,9 +71,9 @@ init_pic
     ; Clear interrupt register: disable all interrupts
     clrf INTCON
 
-    ; Configure oscillator to 4MHz
+    ; Configure oscillator to 500kHz
     banksel OSCCON
-    movlw 0x68
+    movlw 0x38
     movwf OSCCON
 
     ; Clear variables
