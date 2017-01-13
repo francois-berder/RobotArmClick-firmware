@@ -36,20 +36,29 @@
 ;    i2c_state      |       0x70 (shared)
 ;    i2c_buffer     |       0x71 (shared)
 ;    current_reg    |       0x72 (shared)
+;    servo_enable   |       0x73 (shared)
 
 ;   Each servo_con_X variable has this format:
 ;    ---------------------------------------
-;   | D6 | D5 | D4 | D3 | D2 | D1 | D0 | EN |
+;   | X | D6 | D5 | D4 | D3 | D2 | D1 | D0 |
 ;    ---------------------------------------
 ;
 ;   D[6:0]: data bits to indicate position of servo (128 positions available)
-;   EN: Enable bit
-;       1: Enable servo output
-;       0: Disable servo output
+;
+; servo_enable:
+;
+;    ---------------------------------------
+;   | X | X | X | X | EN3 | EN2 | EN1 | EN0 |
+;    ---------------------------------------
+;
+;   EN<x>:
+;       1: Enable output on servo <x>
+;       0: Disable output on servo <x>
 
 i2c_state   equ 0x70
 i2c_buffer  equ 0x71
 current_reg equ 0x72
+servo_enable equ 0x73
 
 ; Reset vector
     org 0x0000
@@ -99,6 +108,7 @@ init_pic
     clrf i2c_state
     clrf i2c_buffer
     clrf current_reg
+    clrf servo_enable
 
     ; Configure gpios
     banksel ANSELA
