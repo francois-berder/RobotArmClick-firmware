@@ -147,6 +147,13 @@ init_pic
     bsf INTCON, GIE
 
 loop
+    ; If no servo is enabled, set device to sleep
+    movf servo_enable, W
+    btfss STATUS, Z
+    sleep
+    btfss STATUS, Z
+    goto loop
+
     goto loop
 
 handle_i2c_interrupt
