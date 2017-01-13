@@ -90,6 +90,15 @@ init_pic
     clrf i2c_buffer
     clrf current_reg
 
+    ; Configure gpios
+    banksel ANSELA
+    clrf ANSELA
+    banksel LATA
+    clrf LATA
+    banksel TRISA
+    movlw 0x0A
+    movwf TRISA
+
     ; Configure I2C
     banksel APFCON
     bsf APFCON, SDSEL   ; SDA function is on RA3
