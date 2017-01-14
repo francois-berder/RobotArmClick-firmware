@@ -99,7 +99,7 @@ init_pic
     movlw 0x20
     movwf FSR0H
     clrf FSR0L
-    clrf W
+    clrf WREG
     movwi 1[FSR0]       ; servo_con_1 = 0
     movwi 2[FSR0]       ; servo_con_2 = 0
     movwi 3[FSR0]       ; servo_con_3 = 0
@@ -256,7 +256,7 @@ handle_i2c_read_1
     btfss STATUS, C
     goto handle_i2c_read_2
 
-    movlw 0x00
+    clrf WREG
     goto handle_i2c_read_end
 
 handle_i2c_read_2
