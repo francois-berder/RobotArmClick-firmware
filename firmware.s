@@ -239,8 +239,10 @@ handle_i2c_write_2b
 
 handle_i2c_read         ;   if current_reg == 0
                         ;       SSPBUF = servo_enable
-                        ;   else
+                        ;   else if current_reg <= 4
                         ;       SSPBUF = regs[current_reg]
+                        ;   else
+                        ;       SSPBUF = 0
 
     movf current_reg, W
     btfss STATUS, Z
@@ -250,6 +252,14 @@ handle_i2c_read         ;   if current_reg == 0
     goto handle_i2c_read_end
 
 handle_i2c_read_1
+    addlw 0xFB                  ; 0xFB = 251
+    btfss STATUS, C
+    goto handle_i2c_read_2
+
+    movlw 0x00
+    goto handle_i2c_read_end
+
+handle_i2c_read_2
     movlw 0x20
     movwf FSR0H
     movf current_reg, W
