@@ -188,8 +188,7 @@ handle_i2c_write
     return
 
 handle_i2c_write_1              ;   else if current_state == 1
-                                ;       if i2c_buffer <= 4
-                                ;           current_reg = i2c_buffer
+                                ;       current_reg = i2c_buffer
                                 ;       current_state = 2
     movf i2c_state, W
     sublw 0x01
@@ -197,21 +196,15 @@ handle_i2c_write_1              ;   else if current_state == 1
     goto handle_i2c_write_2
 
     movf i2c_buffer, W
-    addlw 0xFB                  ; 0xFB = 251
-    btfsc STATUS, C
-    goto handle_i2c_write_1a
-
-    movf i2c_buffer, W
     movwf current_reg
 
-handle_i2c_write_1a
     lslf i2c_state, 1
     return
 
 handle_i2c_write_2              ;   else if current_state == 2
                                 ;       if current_reg == 0
                                 ;           servo_enable = i2c_buffer & 0x0F
-                                ;       else
+                                ;       else if current_reg <= 4
                                 ;           regs[current_reg] = i2c_buffer
                                 ;       current_state = 4
     movf i2c_state, W
@@ -229,6 +222,10 @@ handle_i2c_write_2              ;   else if current_state == 2
     goto handle_i2c_write_2b
 
 handle_i2c_write_2a
+    addlw 0xFB                  ; 0xFB = 251
+    btfsc STATUS, C
+    goto handle_i2c_write_2b
+
     movlw 0x20
     movwf FSR0H
     movf current_reg, W
