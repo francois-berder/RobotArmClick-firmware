@@ -25,6 +25,11 @@
 ; 7-bit slave address on bits [7-1], hence 0x15
 #define I2C_ADDRESS (0x3A)
 
+#define SERVO_1_GPIO_MASK       (0x01)
+#define SERVO_2_GPIO_MASK       (0x04)
+#define SERVO_3_GPIO_MASK       (0x10)
+#define SERVO_4_GPIO_MASK       (0x20)
+
 ;   MEMORY MAP
 ;
 ;       name        |       address
@@ -37,6 +42,7 @@
 ;    i2c_buffer     |       0x71 (shared)
 ;    current_reg    |       0x72 (shared)
 ;    servo_enable   |       0x73 (shared)
+;    servo_mask     |       0x74 (shared)
 
 ;   Each servo_con_X variable has this format:
 ;    ---------------------------------------
@@ -48,17 +54,22 @@
 ; servo_enable:
 ;
 ;    ---------------------------------------
-;   | X | X | X | X | EN3 | EN2 | EN1 | EN0 |
+;   | B4 | B3 | B2 | B1 | EN4 | EN3 | EN2 | EN1 |
 ;    ---------------------------------------
 ;
 ;   EN<x>:
 ;       1: Enable output on servo <x>
 ;       0: Disable output on servo <x>
+;
+;   B<x>:
+;       1: Currently servicing this servo
+;       0: Not currently servicing this servo
 
-i2c_state   equ 0x70
-i2c_buffer  equ 0x71
-current_reg equ 0x72
-servo_enable equ 0x73
+i2c_state       equ 0x70
+i2c_buffer      equ 0x71
+current_reg     equ 0x72
+servo_enable    equ 0x73
+servo_mask      equ 0x74
 
 ; Reset vector
     org 0x0000
@@ -109,6 +120,7 @@ init_pic
     clrf i2c_buffer
     clrf current_reg
     clrf servo_enable
+    clrf servo_mask
 
     ; Configure gpios
     banksel ANSELA
@@ -148,11 +160,13 @@ init_pic
 
 loop
     ; If no servo is enabled, set device to sleep
-    movf servo_enable, W
-    btfss STATUS, Z
-    sleep
-    btfss STATUS, Z
-    goto loop
+    ;movf servo_enable, W
+    ;btfss STATUS, Z
+    ;sleep
+    ;btfss STATUS, Z
+    ;goto loop
+
+    call process_servo
 
     goto loop
 
@@ -203,7 +217,7 @@ handle_i2c_write_1              ;   else if current_state == 1
 
 handle_i2c_write_2              ;   else if current_state == 2
                                 ;       if current_reg == 0
-                                ;           servo_enable = i2c_buffer & 0x0F
+                                ;           servo_enable = (servo_enable & 0xF0) | (i2c_buffer & 0x0F)
                                 ;       else if current_reg <= 4
                                 ;           regs[current_reg] = i2c_buffer
                                 ;       current_state = 4
@@ -216,9 +230,13 @@ handle_i2c_write_2              ;   else if current_state == 2
     btfss STATUS, Z
     goto handle_i2c_write_2a
 
+    movf servo_enable, W
+    andlw 0xF0
+    andwf servo_enable
+
     movf i2c_buffer, W
     andlw 0x0F
-    movwf servo_enable
+    iorwf servo_enable
     goto handle_i2c_write_2b
 
 handle_i2c_write_2a
@@ -269,6 +287,316 @@ handle_i2c_read_2
 handle_i2c_read_end
     banksel SSPBUF
     movwf SSPBUF
+
+    return
+
+
+process_servo
+    btfss servo_enable, 0
+    goto process_servo_2
+
+    movlw SERVO_1_GPIO_MASK
+    movwf servo_mask
+    bsf servo_enable, 4
+    call perform_pulse
+    bcf servo_enable, 4
+
+process_servo_2
+    btfss servo_enable, 1
+    goto process_servo_3
+
+    movlw SERVO_2_GPIO_MASK
+    movwf servo_mask
+    bsf servo_enable, 5
+    call perform_pulse
+    bcf servo_enable, 5
+
+process_servo_3
+    btfss servo_enable, 2
+    goto process_servo_4
+
+    movlw SERVO_3_GPIO_MASK
+    movwf servo_mask
+    bsf servo_enable, 6
+    call perform_pulse
+    bcf servo_enable, 6
+
+process_servo_4
+    btfss servo_enable, 3
+    goto process_servo_end
+
+    movlw SERVO_4_GPIO_MASK
+    movwf servo_mask
+    bsf servo_enable, 7
+    call perform_pulse
+    bcf servo_enable, 7
+
+process_servo_end
+
+    return
+
+
+perform_pulse
+
+    movf servo_mask, W          ; Set GPIO high
+    banksel LATA
+    movwf LATA
+
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+
+
+    movlw 0x20                  ; Load content of servo_con_<x>
+    movwf FSR0H
+    btfsc servo_enable, 4
+    movlw 0x01
+    btfsc servo_enable, 5
+    movlw 0x02
+    btfsc servo_enable, 6
+    movlw 0x03
+    btfsc servo_enable, 7
+    movlw 0x04
+    movwf FSR0L
+    moviw 0[FSR0]
+
+    andlw 0x7F
+    sublw 0x7F
+    brw
+
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+
+    clrf LATA
 
     return
 
