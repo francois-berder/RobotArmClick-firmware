@@ -160,11 +160,12 @@ init_pic
 
 loop
     ; If no servo is enabled, set device to sleep
-    ;movf servo_enable, W
-    ;btfss STATUS, Z
-    ;sleep
-    ;btfss STATUS, Z
-    ;goto loop
+    movf servo_enable, 1
+    btfsc STATUS, Z
+    sleep
+    movf servo_enable, 1    ; servo_enable might have been written by the
+    btfsc STATUS, Z         ; i2c master, so we need to load it again.
+    goto loop
 
     call process_servo
 
