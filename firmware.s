@@ -338,6 +338,11 @@ process_servo_end
 
 perform_pulse
 
+    ; Disable interrupt to prevent servicing i2c bus.
+    ; This ensures that the length of the pulse is not longer than it should.
+    banksel INTCON
+    bcf INTCON, GIE
+
     movf servo_mask, W          ; Set GPIO high
     banksel LATA
     movwf LATA
@@ -597,7 +602,8 @@ perform_pulse
     nop
 
     clrf LATA
-
+    banksel INTCON
+    bsf INTCON, GIE
     return
 
     end
