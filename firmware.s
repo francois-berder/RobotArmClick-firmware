@@ -25,10 +25,10 @@
 ; 7-bit slave address on bits [7-1], hence 0x15
 #define I2C_ADDRESS (0x3A)
 
-#define SERVO_1_GPIO_MASK       (0x01)
-#define SERVO_2_GPIO_MASK       (0x04)
-#define SERVO_3_GPIO_MASK       (0x10)
-#define SERVO_4_GPIO_MASK       (0x20)
+#define SERVO_1_GPIO_MASK       (0x20)
+#define SERVO_2_GPIO_MASK       (0x10)
+#define SERVO_3_GPIO_MASK       (0x01)
+#define SERVO_4_GPIO_MASK       (0x04)
 
 ;   MEMORY MAP
 ;
