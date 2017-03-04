@@ -258,7 +258,7 @@ handle_i2c_write_2b
     return
 
 handle_i2c_read         ;   if current_reg == 0
-                        ;       SSPBUF = servo_enable
+                        ;       SSPBUF = (servo_enable & 0x0F)
                         ;       current_reg++
                         ;   else if current_reg <= 4
                         ;       SSPBUF = regs[current_reg++]
@@ -270,6 +270,7 @@ handle_i2c_read         ;   if current_reg == 0
     goto handle_i2c_read_1
 
     movf servo_enable, W
+    andlw 0x0F
     incf current_reg
     goto handle_i2c_read_end
 
