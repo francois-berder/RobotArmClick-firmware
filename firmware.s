@@ -299,6 +299,8 @@ handle_i2c_read_end
 
 process_servo
     btfss servo_enable, 0
+    call wait_5ms
+    btfss servo_enable, 0
     goto process_servo_2
 
     movlw SERVO_1_GPIO_MASK
@@ -308,6 +310,8 @@ process_servo
     bcf servo_enable, 4
 
 process_servo_2
+    btfss servo_enable, 1
+    call wait_5ms
     btfss servo_enable, 1
     goto process_servo_3
 
@@ -319,6 +323,8 @@ process_servo_2
 
 process_servo_3
     btfss servo_enable, 2
+    call wait_5ms
+    btfss servo_enable, 2
     goto process_servo_4
 
     movlw SERVO_3_GPIO_MASK
@@ -328,6 +334,8 @@ process_servo_3
     bcf servo_enable, 6
 
 process_servo_4
+    btfss servo_enable, 3
+    call wait_5ms
     btfss servo_enable, 3
     goto process_servo_end
 
@@ -1125,6 +1133,14 @@ wait_one_ms
     nop
     nop
 
+    return
+
+wait_5ms:
+    call wait_one_ms
+    call wait_one_ms
+    call wait_one_ms
+    call wait_one_ms
+    call wait_one_ms
     return
 
     end
