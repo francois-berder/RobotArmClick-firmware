@@ -22,7 +22,7 @@
     __CONFIG _CONFIG2, _LVP_OFF & _LPBOR_OFF & _BORV_LO & _STVREN_ON & _WRT_ALL
 
 
-; 7-bit slave address on bits [7-1], hence 0x15
+; 7-bit slave address on bits [7-1], hence 0x1D
 #define I2C_ADDRESS (0x3A)
 
 #define SERVO_1_GPIO_MASK       (0x20)
@@ -46,10 +46,10 @@
 
 ;   Each servo_con_X variable has this format:
 ;    ---------------------------------------
-;   | X | D6 | D5 | D4 | D3 | D2 | D1 | D0 |
+;   | D7 | D6 | D5 | D4 | D3 | D2 | D1 | D0 |
 ;    ---------------------------------------
 ;
-;   D[6:0]: data bits to indicate position of servo (128 positions available)
+;   D[7:0]: data bits to indicate position of servo (256 positions available)
 ;
 ; servo_enable:
 ;
