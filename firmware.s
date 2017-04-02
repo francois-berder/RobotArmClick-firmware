@@ -423,6 +423,9 @@ perform_pulse
     movwf FSR0L
     moviw 0[FSR0]
 
+; Execute W nop instructions. This means that depending on the value of
+; W, between 0 and 255 instructions are executed. Hence, the gpio is
+; high between 0.5 and 2.54ms.
     sublw 0xFF
     brw
 
@@ -687,6 +690,10 @@ perform_pulse
     banksel INTCON
     bsf INTCON, GIE
 
+
+; Load value in W and execute 256 - W nop instructions.
+; This sequence is needed to ensure that whatever the value of W,
+; perform_pulse is always executed in the same amount of time.
     moviw 0[FSR0]
     brw
 
@@ -947,6 +954,8 @@ perform_pulse
     nop
     nop
 
+; Wait a bit more to ensure that perform_pulse
+; takes as close as possible to 5ms to execute.
     call wait_one_ms
     call wait_one_ms
 
