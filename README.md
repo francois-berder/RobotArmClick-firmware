@@ -14,7 +14,7 @@ $ sudo apt-get install gpasm
 Then, create the firmware:
 
 ```sh
-$ gpasm -p pic12lf1552 firmware.s -w1
+$ make
 ```
 
 ### Controlling the device over I2C
